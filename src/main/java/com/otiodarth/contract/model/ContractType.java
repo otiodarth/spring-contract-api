@@ -1,4 +1,4 @@
-package com.otiodarth.contract;
+package com.otiodarth.contract.model;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;

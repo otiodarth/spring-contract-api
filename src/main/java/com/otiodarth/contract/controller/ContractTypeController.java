@@ -1,5 +1,7 @@
-package com.otiodarth.contract;
+package com.otiodarth.contract.controller;
 
+import com.otiodarth.contract.model.ContractType;
+import com.otiodarth.contract.service.ContractTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
