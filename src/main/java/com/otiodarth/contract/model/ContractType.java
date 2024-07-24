@@ -28,6 +28,10 @@ public class ContractType {
     public ContractType() {
     }
 
+    public String getId() {
+        return id.toString();
+    }
+
     public String getDescription() {
         return description;
     }
