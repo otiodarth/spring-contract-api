@@ -1,8 +1,8 @@
 package com.otiodarth.contract.controller;
 
 import com.otiodarth.contract.model.ContractType;
+import com.otiodarth.contract.response.ApiResponse;
 import com.otiodarth.contract.service.ContractTypeServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,24 +16,32 @@ import java.net.URI;
 @RestController
 @RequestMapping("contracts-types")
 public class ContractTypeController {
+    private final ContractTypeServiceImpl contractTypeServiceImpl;
 
-    @Autowired
-    private ContractTypeServiceImpl contractTypeServiceImpl;
+    ContractTypeController(ContractTypeServiceImpl contractTypeServiceImpl) {
+        this.contractTypeServiceImpl = contractTypeServiceImpl;
+    }
 
     @PostMapping
-    public ResponseEntity<?> createContractType(@RequestBody ContractType contractType, UriComponentsBuilder ucb) {
+    public ResponseEntity<ApiResponse> createContractType(@RequestBody ContractType contractType, UriComponentsBuilder ucb) {
         try {
             ContractType createdContractType = contractTypeServiceImpl.createContractType(contractType);
             URI createdContractTypeLocation = ucb
                     .path("contracts-types/{id}")
                     .buildAndExpand(createdContractType.getId())
                     .toUri();
-            return ResponseEntity.created(createdContractTypeLocation).body(createdContractType);
+            ApiResponse<ContractType> response = ApiResponse.success(
+                    createdContractType,
+                    "Created successfully",
+                    HttpStatus.CREATED.value());
+            return ResponseEntity.created(createdContractTypeLocation).body(response);
 
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            ApiResponse<String> response = ApiResponse.error(e.getMessage(), HttpStatus.BAD_REQUEST.value());
+            return ResponseEntity.badRequest().body(response);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+            ApiResponse<String> response = ApiResponse.error(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseEntity.internalServerError().body(response);
         }
     }
 }
